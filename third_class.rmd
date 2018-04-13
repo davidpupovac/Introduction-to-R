@@ -1,0 +1,301 @@
+---
+title: "Introduction to R: Data Frames"
+author: "David Pupovac"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    fig_caption: yes
+    fig_width: 6
+    theme: readable
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+fontsize: 10pt
+---
+  
+<style type="text/css">
+  
+  body, td {
+    font-size: 14px;
+    text-align: justify;
+  }
+code.r{
+  font-size: 12px;
+}
+pre{
+  background-color: #FFFFFF;
+    font-size: 12px;
+}
+pre:not([class]) {
+  background-color: #D8D8D8;
+    color: black;
+}
+h1 {
+  font-size: 28px;
+  text-align: center;
+}
+h2 {
+  font-size: 24px;
+  text-align: left;
+}
+h3 {
+  font-size: 16px;
+  text-align: left;
+  margin: 2em 0 1.5em 0;
+}
+h4 {
+  font-size: 18px;
+  text-align: center;
+  margin: 0em 0 1em 0;
+}
+</style>
+---  
+
+#####Dataframes
+
+A dataframe is an object with rows and columns (a bit like a matrix). **The values in the body of a dataframe can be numbers, but also be text.** A data frame is a list of equal-length vectors. 
+ 
+<br>
+
+#### Dataframes and other data types
+
+Create a list:
+```{r}
+(newList <- list(x = c(2, 5), y = c(6, 8.1)))
+newList$x 
+```
+
+Convert list to a dataframe:
+```{r}
+(newData <- as.data.frame(newList))
+```
+
+Convert matrix to a dataframe (3 rows, 4 columns):
+
+```{r}
+(newData <- as.data.frame(matrix(1:12,3,4))) # notice the names at the top
+```
+ 
+<br>
+
+####Subsetting dataframes
+
+Let's give nice names to variables first
+
+```{r}
+colnames(newData) <- c("question.1","question.2","question.3","question.4")
+
+# to see dataframe variable names:
+colnames(newData)
+```
+
+Subsetting method is identical to the method used for matrices:  
+
+```{r}
+newData[2:3]   # select second and third column
+newData[2,3]   # select an element in second row and third column
+newData[2,]    # select second row
+newData[,2]    # select second column
+newData[c("question.1", "question.3")] # select using variable names
+```
+
+**However, most commonly to select a single variable from a dataframe you will use $ in form of "data$variable". See examples below:** 
+```{r}
+# First let's load some data which is already distributed with R 
+dataIris <- data.frame(iris)
+dataIris
+# data$Species
+```
+
+Selecting variables:
+```{r}
+subset_iris <- dataIris$Sepal.Length
+subset_iris
+```
+
+Data frames collect different types of vectors. We can subset the data frames on the basis of vector types
+```{r}
+subset_iris <- dataIris[,sapply(dataIris,is.numeric)] # select all numeric columns
+subset_iris <- dataIris[,sapply(dataIris,is.factor)]  # select all factor columns
+```
+
+Selecting a subset of vectors:
+```{r}
+# to exclude variables: Sepal.Length, Sepal.Width, Species: 
+myvars <- names(dataIris) %in% c("Sepal.Length", "Sepal.Width", "Species")
+newdata <- dataIris[!myvars]
+
+# to select variables: Sepal.Length, Sepal.Width, Species just drop ! sign:
+newdata <- dataIris[myvars]
+```
+
+Selecting a subset of cases:
+```{r}
+subset_iris <- dataIris[dataIris$Species == "versicolor",]       # select on the basis of factor values
+subset_iris <- dataIris[!(dataIris$Species == "versicolor"),]    # negative selection based on factor
+subset_iris <- dataIris[-which(dataIris$Species=="versicolor"),] # the same as above
+
+# select using several variables: 
+subset_iris <- dataIris[dataIris$Sepal.Length > median(dataIris$Sepal.Length) & dataIris$Sepal.Width < 2.6,]
+```
+ 
+<br>
+
+####Adding and deleting variables
+
+Remember that we can also use cbind!
+
+```{r}
+dataIris$new.variable <- 1:150
+
+# see what happens when you try to add a shorter vector 
+# dataIris$new.variable <- 1:130
+
+# to delete a variable 
+dataIris$new.variable <- NULL 
+```
+
+<br>
+
+####Ways to look at your data
+
+```{r}
+View(dataIris) # show you the data like in SPSS, Stata..., in new tab
+
+head(dataIris)  ## display first 6 rows
+tail(dataIris)  ## display last 6 rows
+
+# Naturally, these are the same as: 
+dataIris[1:6, ]  
+dataIris[145:150, ]  
+
+dim(dataIris)  ## again, know the dimensions! (That is what the dim commands does)
+
+str(dataIris)  ## very useful to get an idea what you are up against, but also to check whether you have the data frame and format with the variables you wanted to have 
+
+# If you really must edit your data from R (and in principle you should not edit your data) you can:
+fix(dataIris) 
+```
+ 
+<br>
+
+####Sorting dataframe
+```{r}
+dataIris <- dataIris[order(dataIris$Petal.Length),]
+dataIris[1:15, ]
+
+dataIris <- dataIris[rev(order(dataIris$Petal.Length)),]  # reverse order
+dataIris[1:15, ]
+
+dataIris <- dataIris[order(dataIris$Petal.Length, dataIris$Sepal.Width),] # two variables
+dataIris[1:15, ]
+```
+ 
+<br>
+
+####Naming rows
+
+- You might want to use row names: so far, it was just a number
+- You most certainly can do this. In the long run, though, use unique ID variables in your data
+- Row names can be saved, but better to always keep a unique ID
+
+Suppose your observations are individuals, and you want a simple row name: Individual and the number. Let us generate a character vector of length 3 to do this.
+
+```{r}
+newData
+
+(rNames <- paste("Individual", 1:3, sep = "_"))  
+```
+or
+
+```{r}
+rNames <- paste("Individual", 1:length(newData$question.1), sep = "_")  # why is this better?
+rownames(newData) <- rNames  # as you can see, assign our new character vector to the row names of our data. You can use return values from a function on both sides of an assignment
+newData[1:3, ]
+
+dim(newData)  # Note, length(data frame) is not the way to go. length is good for vectors
+
+length(newData) # compare this to:
+length(newData$question.1)
+```
+
+```{r}
+summary(newData)
+
+str(newData)
+```
+ 
+<br>
+
+####Importing data
+
+**Some basics about data storage in general (before loading the data):**
+
+- All the values of the same variable must go in the same column.
+- Any spaces in any of the variable names (row 1) should be deleted (so, do not name variable "variable 1")
+- It is good idea to remove any apostrophes from variable names
+- Be sure you data has a id variable (although you can add your id variable in R)
+- When working with data, we need to make sure missing values are coded correctly.  More on this later.
+ 
+<br>
+
+#####Let's start importing data saved in various formats 
+
+- Set working directory
+
+```{R}
+setwd('C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data') # or whatever you want to use
+```
+
+- Put the data in that folder.  (**All of them.**)
+
+- Now we can start importing data of different types
+
+#####Importing files of type .txt 
+```{R}
+myData <- read.table("example.txt", header=TRUE, sep="\t") 
+
+# if working directory is not set, you can directly refer to the data
+myData <- read.table("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data/example.txt", header=TRUE, sep="\t") 
+
+# You can also select data
+myData<-read.table(file.choose(), header = TRUE, sep="\t")
+```
+#####Importing files of type .csv  
+```{R}
+myData <- read.csv("example.csv", header=TRUE) 
+```
+
+#####Importing files of type .xlsx (Excel)
+```{r}
+## install.packages('XLConnect', dependencies = T)
+library(XLConnect)
+myData <- readWorksheet(loadWorkbook("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data/example.xlsx"),sheet=1)
+```
+
+#####Importing files of type .sav (SPSS) 
+```{R}
+## install.packages('foreign', dependencies = T) 
+library(foreign)
+
+myData <- read.spss("example.sav")  ## very basic, and accordingly not working
+is.list(myData)  ## again, this is not what you expect. It is a list.
+
+is.data.frame(myData) ## but we want data frames
+
+myData <- read.spss("example.sav", to.data.frame = T)  ## it is closer to what we want
+summary(myData[8:10])  ## but those labels?! Maybe better without
+
+myData <- read.spss("example.sav", to.data.frame = T, use.value.labels = F)  
+```
+
+#####Importing files of type .dta (Stata) 
+
+```{R}
+myData <- read.dta("example.dta")  
+is(myData)
+
+# do not convert to factor
+myData <- read.dta("example.dta", convert.factors = F)  
+```
