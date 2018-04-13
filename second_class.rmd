@@ -1,0 +1,429 @@
+---
+title: "Introduction to R: Data Management and more"
+author: "David Pupovac"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    fig_caption: yes
+    fig_width: 6
+    theme: readable
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+fontsize: 10pt
+---
+  
+<style type="text/css">
+  
+  body, td {
+    font-size: 14px;
+    text-align: justify;
+  }
+code.r{
+  font-size: 12px;
+}
+pre{
+  background-color: #FFFFFF;
+    font-size: 12px;
+}
+pre:not([class]) {
+  background-color: #D8D8D8;
+    color: black;
+}
+h1 {
+  font-size: 28px;
+  text-align: center;
+}
+h2 {
+  font-size: 24px;
+  text-align: left;
+}
+h3 {
+  font-size: 12px;
+  text-align: left;
+  margin: 2em 0 1.5em 0;
+}
+h4 {
+  font-size: 18px;
+  text-align: center;
+  margin: 0em 0 1em 0;
+}
+</style>
+---  
+
+####Let's review vectors
+
+```{r}
+numericVector <- c(1, 2, 3, 4, 5, 6)  # or numericVector <- 1:5
+print (numericVector)
+```
+
+```{r}
+charVector <- c("Bob", "Jane", "Jack")
+print (charVector)
+```
+
+```{r}
+logVector <- c(T, F, T)  # T = TRUE, F = FALSE)
+print(logVector)
+```
+
+You can also print your object right away by putting it in brackets like this:
+```{r}
+(numericVector <- c(1, 2, 3, 4, 5, 6))   # so, no separate print command
+```
+ 
+<br>
+
+####Vectors (cont.)
+###Subsetting vectors 
+Subset of vector can be defined using subscripts (also known as indices) which have square brackets [  ]  
+
+```{r}
+y <- c(5:25)  # create a vector
+y[3]          # extracting third element from a vector
+y[-3]         # extracting all elements except third
+y[1:3]        # extracting first three
+y[-c(1,5)]    # extracting all elements except first and fifth
+y[y < 10]      # extracting all elements smaller than 10
+y[ c(F,F,T)]  # extracting every third (logical subsetting)
+```
+###Changing the values in vector
+
+```{r}
+y[5] <- 3.14         
+y[5:7] <- c(100, 100, 100)
+
+a <- c(4, 6, 8) 
+a[5] <- 9 # notice NA!
+a
+```
+
+###Vector calculations 
+
+If the vectors are of the same length, we may add, subtract, multiply corresponding elements
+```{r}
+y + 10 
+x <- y * 5 
+x
+y
+x + y  
+x * y
+```
+See what happens when vectors are unequal
+```{r}
+y <- c(1:20)
+z <- c(1, 10, 100)
+z * y
+```
+
+###Strings
+
+```{r}
+a <- "abc"
+b <- "123"
+
+# this command attempt to convert string to numeric
+as.numeric(a)
+as.numeric(b)
+```
+
+<br>
+
+####Cleaning up and reviewing objects 
+
+Command ls() - list all objects
+```{r}
+ls()
+```
+
+Command rm() - removes objects
+```{r}
+rm(charVector)
+```
+
+Remove a number of  objects
+```{r}
+rm(list=c("a","z"))
+```
+
+The following command removes all objects. (Be careful with this. I have placed # in front of the command so it is ignored)
+```{r}
+# rm(list=ls())
+```
+
+
+<br>
+
+####Factors vs. character vectors
+
+```{r}
+# vector
+y <- c("like", "dislike", "hate", "like", "don't know", "like", "dislike") 
+y
+
+# factor
+x <- factor(c("like", "dislike", "hate", "like", "don't know", "like", "dislike"))
+x
+is.factor(x)
+
+factor(x, levels = c("hate", "dislike", "like", "don't know"),   ordered = TRUE) # notice how order is displayed
+
+y <-as.factor(y) # transform to factor
+
+```
+
+<br>
+
+####Matrices
+
+- Matrices are for data of the same type and can  collect data of any type (though typically they are numeric).
+
+```{r}
+numericMatrix <- matrix(numericVector,byrow=T,nrow=2) # notice the structure of command
+numericMatrix
+
+numericVector # compare to previous command
+
+# Additional way of creating a matrix from a vector
+dim(numericVector)<-c(3,2)
+is.matrix(numericVector)
+```
+
+```{r}
+trialMat <- matrix(1:20, nrow = 2, ncol = 10, byrow = F)
+trialMat
+trialMat <- matrix(1:20, nrow = 2, ncol = 10, byrow = T)
+trialMat
+```
+Lets compare matrix to vector
+
+```{r}
+class(trialMat)
+attributes(trialMat)
+dim(trialMat)
+
+numericVector <- c(1, 2, 3, 4, 5, 6)
+class(numericVector)
+is(numericVector)
+attributes(numericVector)
+length(numericVector)
+```
+
+```{r}
+is(x)
+is(y)
+is(numericVector)
+is(trialMat)
+```
+
+###Subsetting matrices
+Order is rows by columns - **ALWAYS!**
+
+```{r}
+z <- matrix(c(6,14,3,25,5,32,50,18,9),nrow=3,byrow=FALSE) # fill in matrix in column fashion (first three numbers in column) 
+z
+```
+
+If the following commands are turned to objects, the objects become vectors
+```{r}
+z[1,]        # get one row with all columns if coordinate 2 blank
+z[,2]        # get one column with all rows if coordinate 1 blank
+z[1,2]       # extracting element from the first row, second column
+z[c(1,3),2]  # first and third row, column two
+z[-c(1,3) ,] # exclude first and third row
+diag(z)      # extracting diagonal of matrix 
+```
+
+###Matrix algebra
+```{r}
+z*10                     # multiplying by scalar
+z%*%z                    # multiplying matrices
+z_inverse <- solve(z)    # inverse of z where z is a square matrix
+z%*%z_inverse            # multiplying matrices
+
+round((z%*%z_inverse),3) # round to 3 decimals
+```
+
+You can also transpose a matrix like this:
+```{r}
+trialMat <- matrix(1:20, nrow = 2, ncol = 10, byrow = T)
+trialMat
+tranMat <- t(trialMat)
+print(tranMat)
+propMat <- t(tranMat)
+print(propMat)
+```
+###Mergeing row and column-wise
+
+For this you need column/row of the object which is to be merged to be of the exact size of columns/rows in the matrix. So dimensions are expected to be matching. If you are (re)merging parts of the same data set, be sure data is not reordered or that some cases are not deleted.
+```{r}
+x <- matrix(c(61, 17, 13, 
+              52, 35, 44), nrow = 2,byrow = F)         
+y <- c(55, 33, 47) 
+
+# column bind
+cbind(x,y) # notice what happened
+
+# check dimensions
+dim(x)
+
+# row bind
+x <- rbind(x,y)
+dim(x)
+
+# try again column bind
+cbind(x,y)
+
+```
+
+###Fun with as.vector function
+```{r}
+trialMat <- matrix(1:20, nrow = 2, ncol = 10, byrow = T)
+as.vector (trialMat)
+as.vector (t(trialMat)) # transposed
+```
+
+<br>
+
+####Arrays
+
+Arrays are numeric objects with dimension attributes.Note that the values have been entered into array in columnwise sequence: this is the default in R.
+
+- A vector is a one-dimensional array
+- A matrix is a two-dimensional array
+
+```{r}
+my.array <- array(1:24, dim=c(3,4,2)) 
+my.array
+```
+
+### Arrays can have more than 3 dimensions 
+```{r}
+array(1:24, dim=c(3,3,2,2))
+```
+
+###Subsetting arrays
+```{r}
+A <- letters[1:24]
+dim(A) <- c(4,2,3)
+A
+
+A[ , ,1:2] # first two tables
+A[ , ,3]
+A[3, , ]   # third row across tables, notice realignment
+A[3, , ,drop=F]
+```
+
+<br>
+
+####Lists
+
+Unlike other data types lists can collect objects of different classes and different dimensions
+
+```{r}
+a <- c("a","b","c","d")
+b <- c(1,2,3,4,4,3,2,1)
+c <- c(T,T,F)
+
+list.object.1 <- list(a,b,c)  # notice how objects are joined as list
+list.object.1
+
+class(list.object.1)
+lapply(list.object.1,class)     # check the class of each element (lapply is function for list or vectors)
+```
+
+You can also name elements of the list
+
+```{r}
+list.object.2 <- list(course = c("Intro to R", "David Pupovac"),
+                 start = c(17, 17, 52, 4), 
+                 credit = c(2, NA, 6))
+print (list.object.2)
+
+```
+
+###Subsetting list
+```{r}
+list.object.2[1]
+
+list.object.2$course
+
+list.object.2[[1]] # notice [[ ]], this is a specific way to address elements of list
+
+list.object.2[[1]][2]
+
+list.object.2[1][3] # this will not work
+
+```
+
+<br>
+
+####Packages
+
+A package is a collection of functions, examples and documentation. The functionality of a package is often focused on a special statistical methodology. Let's load package 'foreign'. It reads data stored by Minitab, S, SAS, SPSS, Stata, Systat, Weka, dBase...you name it
+
+```{r}
+# install.packages("foreign") # This is how you download a package
+```
+
+```{r}
+library(foreign) # This is how you indicate to R it's used in your script
+```
+
+To update the packages:
+```{r}
+# update.packages()
+```
+
+What packages do I have installed?
+
+```{r}
+(.packages(all.available=TRUE))
+```
+
+<br>
+
+####Help
+
+There are several ways to look for help in R. Of course, you can go online.
+
+If you know the name of the function you want help with, you just type a question mark ?
+```{r}
+?class
+```
+
+You can also use help()
+```{r}
+help(class)
+```
+
+You can look for help with respect to specific libraries/packages
+```{r}
+library(help=foreign)
+```
+
+Sometimes you cannot remember the precise name of the function, but you know the subject on which you want help
+
+```{r}
+help.search("data input")
+```
+
+Function find() tells you what package something is in:
+
+```{r}
+find("lowess")
+```
+
+Function apropos() returns a character vector giving the names of all objects in the search list that match your (potentially partial) enquiry
+
+```{r}
+apropos("lm")
+```
+
+Need help with syntax? Check arguments using "args" like this
+```{r}
+args(sd)
+```
+
