@@ -52,13 +52,13 @@ h4 {
 </style>
 ---  
 
-#####Dataframes
+## Dataframes
 
 A dataframe is an object with rows and columns (a bit like a matrix). **The values in the body of a dataframe can be numbers, but also be text.** A data frame is a list of equal-length vectors. 
  
 <br>
 
-## Dataframes and other data types
+### Dataframes and other data types
 
 Create a list:
 ```{r}
