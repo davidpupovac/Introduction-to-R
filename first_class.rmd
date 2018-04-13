@@ -1,7 +1,7 @@
 ---
-title: 'Introduction to R: Essentials'
-author: 'David Pupovac'
-date: '`r Sys.Date()`'
+title: "Introduction to R: Graphs and starting with stats"
+author: "David Pupovac"
+date: "`r Sys.Date()`"
 output:
   html_document:
     fig_caption: yes
@@ -40,7 +40,7 @@ h2 {
   text-align: left;
 }
 h3 {
-  font-size: 12px;
+  font-size: 18px;
   text-align: left;
   margin: 2em 0 1.5em 0;
 }
@@ -51,285 +51,312 @@ h4 {
 }
 </style>
 ---  
-<!-- you made a big font with #####--> 
-####What is R?
 
-**The R is an environment for data analysis and graphics.**  
 
-- Open source
-- A full-featured programming language
-- Two major parts: the base system and a collection of user contributed add-on packages
+```{R}
+# setwd("C:/Desktop/Introduction to R")
+```
 
-###Other Software
-
-- [Phyton](https://www.python.org/)
-- [PSPP](https://www.gnu.org/software/pspp/)   
-
-###Pros and Cons
-
-- Powerful
-- Steep learning curve 
-
-####Information on R 
-
-###Main web pages
-
-Home site: [R-project](http://www.R-project.org)  
-Comprehensive R Archive Network site: [CRAN](https://cran.r-project.org/)
-
-###Internet (tremendous amount of information about R on the web). Some good sources:
-
-- [Stack Overflow](http://stackoverflow.com/)
-- [R bloggers](https://www.r-bloggers.com/)
-- [Stack Exchange](stackexchange.com)
-
-###Books on R - ever-growing number
-
-- Springer series [Use R!](http://www.springer.com/series/6991)
-
-###Some good 'beginner' books:
-
-- Crawley, M J.  (2007) The R Book, John Wiley & Sons Ltd 
-- Everitt, E. S., Hothorn (2009) A Handbook of Statistical Analyses using R, CRC Press
-- Venables, W. N., Smith, D. M.  and the R Development Core Team (2016) An Introduction to R [get it here!](https://cran.r-project.org/doc/manuals/r-release/R-intro.pdf)
-
+```{R}
+EUnoNA <- na.omit(read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data/example.csv")) # notice: we combined several commands together 
+```
+ 
 <br>
 
-####R and R Studio 
-
-Available for mac, linux and windows
-
-- [R](https://cran.r-project.org/mirrors.html)
-- [R Studio](https://www.rstudio.com/products/rstudio/download/)
-
-IDE (Integrated Development Environment/TextEditor). There are others.  emacs and vi and sublime text (even steeper learning curve). We use programing languages via IDEs.
-
-###Download and install R and RStudio.  
-
-With respect R you want the 'base' package and you want to run the setup program which will have a name like .exe (on a PC) or .dmg (on a Mac).
-
-Manuals are available in R itself by choosing Help/Manuals (in PDF) from the menu bar.
-
-The symbol > is prompt, it is R's way of saying 'What now?'.
-
-You will sometimes see + instead of >. This means that the last command you typed is incomplete
-
+**Lets do some basic graphs first** 
+ 
 <br>
 
-####Some general advice on scripting:
+###Histogram
 
-- **Never code in the console!** 
-- **Always backup your data (i.e. use DropBox)**
-- Never modify the original data - partly applicable to R (if you want to save data set with some changes, use another name)
-- Running code ctrl+r (or ctrl+enter) on Windows, cmd+enter on mac 
-- You can also use Run in RStudio (highlight the section or place the cursor somewhere on the line)
-- In console, up and down arrow are useful
-- If something goes wrong, check "small" things first: spelling; omitted comma, semicolon; uppercase/lowercase; brackets, data type...
-- Press the Esc key if something goes wrong and the command line prompt > will reappear.
-- Saving (not the console, the script) -  use .R at the end.
-- Keep the script tidy: probably too early (but it is never too early), see here how to script well 
-[clicky1](https://google.github.io/styleguide/Rguide.xml), [clicky2](http://adv-r.had.co.nz/Style.html)
-- Be sure to comment your code. We insert comments in R using # 
-
-So: 
-
-```{r}
-# write whatever here
+```{R}
+hist(EUnoNA$polar)
 ```
 
-does nothing. So, to make a separation in code you can do the following: 
-
-```{r}
-# =======================================================
-#        Introduction to R: Essential stuff      
-# =======================================================
-
-# -------------------------------------------------------
-# This demonstrates how to insert separations,comments and organize the code. Now we will run some real commands.
+Let's make it a bit more fancy 
+```{R}
+hist(EUnoNA$polar, main="Histogram of polarization",
+xlab = "Polarization", col ="steelblue")
 ```
 
+To get two graphs in one
+```{R}
+layout(1:2)
 
+hist(EUnoNA$polar, main="Histogram of polarization",
+xlab = "Polarization", col ="darkred")
+
+hist(EUnoNA$GDP, main="Histogram of GDP",
+xlab = "GDP", col ="darkgreen")
+```
+
+**To save graphs click Plots (lower right window), click Export**
+ 
 <br>
 
-####Running some commands from introductory message:
-<!-- you forced new line by making space--> 
-citation()  
-help.start()  
-demo()  
-demo(graphics) 
+###Scatterplots
+```{R}
+layout(1:1) # fixing the layout 
 
-####Basic commands (built-in functions):
-
-```{r}
-2 + 2
-8 - 3
-```
-You can continue a complicated expression to the next line:
-```{r}
-5+6+3+6+4+2+4+8+
- 3+2+7
-```
-Two or more expressions can be placed on a single line:
-```{r}
-2+3; 5*7; 3-7
+plot(EUnoNA$polar,EUnoNA$nopar)
 ```
 
-###Arithmetic operators: 
+Let's make it a bit more fancy again
 
-- equals: =
-- addition: +     
-- subtraction:  -     
-- multiplication: *     
-- division: /     
-- power: ^     
-
-```{r}
-2*(4+2)  
-2*4+2  
-8^(1/3)  
+```{R}
+plot(EUnoNA$polar,EUnoNA$nopar, main="Scatterplot of polarization vs. effective number of parties",
+ylab = "Polarization", xlab = "Effective number of parties", col = "red", pch = 18)
 ```
 
-###Some mathematical functions
+What if you want to see scatterplots for every pair of variables?
+```{R}
 
-- sqrt(x)
-- exp(x)
-- log(x) 
-- log10(x) 
-- factorial(x)
-- sin(x)
-- abs(x)
-- round(x, digits=0)
+# install.packages("car")
+library(car)
 
-```{r}
-sqrt(25) + 2
-log10(1000)
-abs(-45)
-round(4.35689, digits=2)
+pairs(~polar + vol + nopart + disp + GDP +  demo + nogov, data=EUnoNA, 
+      main="Simple Scatterplot Matrix")
 ```
 
-###Logical arguments:
+Notice that in this case we did not refer to variable as "variable$dataset" but rather we specified a dataset with command data=EUnoNA and used names of variables (column headers).
 
-- not: !  
-- or,union: |
-- and,intersection: & 
-- larger than: >
-- equal: == 
-- not equal: != 
+###Boxplots
 
-```{r}
-26 == (3 * 13) - 13
-26 == (3 * 13) - 12
-26 != (3 * 13) - 12
-3 < 4
-3 > 4
-((4>8) | (4>3))
-((4>8) & (4>3))
+```{R}
+boxplot(EUnoNA$polar, main="Boxplot of polarization", col="gray")
 ```
 
-###Characters:
+
+###ggplot2
+
+R has powerful graphing packages that allow you to create more esthetically appealing graphs. The best known packages are ggplot2 and lattice. Let's just do one relatively simple example using ggplot2
 
 ```{r}
-print('Hello World')
-```
-You can use both double or simple quotes, just keep it consistent
+#install.packages("ggplot2")
 
+library(ggplot2)
+
+ggplot(EUnoNA, aes(y=EUnoNA$nopar, x=EUnoNA$polar)) + 
+  geom_point() +
+  geom_smooth(method=lm, color="black") +
+  labs(title="Scatterplot with fit line - polarization vs. effective number of parties",
+       x="Polarization", y = "Effective number of parties")
+```  
+
+There are numerous possibilities with these functions. Let us just try to change the theme.
+  
+```{r}  
+# We can assign the graphing function to an object
+
+p <- ggplot(EUnoNA, aes(y=EUnoNA$nopar, x=EUnoNA$polar)) + 
+  geom_point() +
+  geom_smooth(method=lm, color="black") +
+  labs(title="Scatterplot with fit line - polarization vs. effective number of parties",
+       x="Polarization", y = "Effective number of parties") 
+
+# Notice that you only specify an additional element with +
+
+p + theme_classic() 
+
+p + theme_minimal()
+```
+
+Let us try to add some lines to the graph
+
+```{r}
+
+# Add a horizontal line at mean of y 
+p + geom_hline(yintercept=mean(EUnoNA$nopar), linetype="dashed", color = "red", size=2) 
+
+# Add a vertical line at mean of x
+p + geom_vline(xintercept=mean(EUnoNA$polar), linetype="dotted", color = "darkgreen", size=1.5) 
+
+# Notice the difference between geom_vline and geom_hline
+```
+
+###Standardization - z scores
+
+But before we discus z scores we will discuss a powerful feature of most programming languages - **functions**. If you have to do something more than twice, write a function for it!  Here's a simple example. 
+
+```{r}
+standardize <- function(x) {
+  (x - mean(x, na.rm = T))/sd(x, na.rm = T)
+}  
+# {} marks code chunk that is executed together. In the () we specify the arguments the function takes, in this case a vector that we name x
+# You select the whole code chunk of the function, and run it.
+```
+
+x  -  notice, when looking in our global environment where we work, x is not defined. x is only defined within the local environment of the function. You can use various names
+ 
 <br>
 
-####Working directory
+**Back to standardization:**
 
-Get current working directory using getw:
+- Standardization assumes that a variable is **scaled** so that standard deviation of the new variable is 1
+- Standardized variables can be compared to other standardized variables 
+- The sign tells whether the score is located above (+) or below (-) the mean
+- Standardization is directly related to the probability of obtaining certain outcomes by means of random selection from normal distributions. 
+
 ```{r}
-getwd()
+sd(EUnoNA$nopart)
+hist(EUnoNA$nopart, col="darkred", main="")
+
+# So lets standardize it
+EUnoNA$nopartStand <- standardize(EUnoNA$nopart)  ## we have created a new variable in our data that contains the standardized age
+sd(EUnoNA$nopartStand)
+hist(EUnoNA$nopartStand, col="darkgreen", main="")
 ```
 
-- **R  uses forward slash or double backward slash**
-- Use meaningful one, keep everyting organized!
+Something is not right here! These variables are supposed to be identically distributed but on a different scale. How come they are not? Let's try to change the width of histogram bars
 
-Set new working directory using setwd()
 ```{r}
-setwd('C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R')
-getwd()
+hist(EUnoNA$nopartStand, col="gray38",  breaks = 8, main="")
+```
+
+This seems better, but still histograms are different. To definitely check, make a scatterplot of standardized and non-standardized variables. If everything is alright the scatterplot should be a straight line.
+
+```{r}
+plot(EUnoNA$nopart,EUnoNA$nopartStand)
 ```
 
 <br>
 
-####Objects
+###Central limit theorem
 
-R is [object-oriented programming language](https://en.wikipedia.org/wiki/Object-oriented_programming)
-
-Objects obtain values in R by assignment. This is achieved by the gets arrow: <-
-
-Be careful these two are not the same:
-```{r}
-y <- 10
-y < -10 # this one is an error 
-```
-See the object
-```{r}
-y
-print(y) # same but more elegant
-```
-
-Also works with logical statements
-
-```{r}
-x <- T
-x
-```
-
-R is not going to stop you from running invalid calculations (but it still won't perform for example calculations with strings)
-
-```{r}
-# Another type of error: TRUE is interpreted as 1 and FALSE as 0
-z <- x+y
-z
-```
-
-**Beware of rewriting objects, you can't undo it!**
+**Central limit theorem**: For any population with mean M and standard deviation SD, the distribution of sample means for sample size N will have a mean of M and a standard deviation of  SD/sqrt(N) and it will be approximately normally distributed. 
 
 <br>
 
-#####Main data types in R:
+**Standard deviation** - standard distance between a score and the mean
 
-- **VECTORS**
-- **MATIRCES**
-- **ARRAYS**
-- **LISTS**
-- **DATAFRAMES**
+**Standard error** - standard distance between sample mean and the population mean
 
-####Vectors
+<br>
 
-Vectors are variables with one or more values of the same type: logical, integer, real, complex, string (or character) or raw. 
-
-###Creating vectors
-
-Defined with  the c command, like this:
-```{r}
-numericVector <- c(1,2,3,4,5)
-print(numericVector)
-numericVector <- c(1:5)      # notice how sequence is defined 
-print (numericVector)
-numericVector <- c(1:5,0.63) # the numbers are no longer integers but floats   
-print (numericVector)
-```
-You can enter values by hand, pressing the Enter key:
-
-- numericVector <- scan()
-
-You can copy paste from Excel with scan. In Excel, highlight the column of numbers you want, then type Ctrl+C (make sure the numbers are in column, not in row). Now go back into R. At the 1: prompt just type Ctrl+V.
+So how do we get standard errors? The simplest way is using packages. 
 
 ```{r}
-charvector <- c('Bob', 'Jane', 'Jack')
-print (charvector)
+#install.packages("psych", dependencies = T)
+library(psych)
 
-logicalvector <- c(T, F, T)
-print (logicalvector)
+(EUnoNADesc <- psych::describe(EUnoNA))  # Asterix marks non-numeric variables, so of course some statistics are misleading.
 ```
-You cannot mix the values:
+
 ```{r}
-MixingAttempt <- c(1, F, T)
-print (MixingAttempt)
-MixingAttempt <- c(1, 'Bob', -0.23, 'Jack')
-print (MixingAttempt)
+str(EUnoNADesc)
 ```
 
+```{r}
+EUnoNADesc$se
+```
+
+Want the standard error of particular variables (e.g. effective number of parties)?  
+```{r}
+EUnoNADesc$se[4]
+```
+
+<br>
+
+**Standard error** writing your own function 
+```{r}
+se <- function(x) sqrt(var(x,na.rm=TRUE)/length(na.omit(x))) #function for standard error
+
+se(EUnoNA$nopart)
+```
+ 
+<br>
+
+**Get confidence intervals**
+```{r}
+mean(EUnoNA$nopart, na.omit = T) # Check mean (I added to drop missing but we don't have any in this case)
+```
+
+**Lower CI 95%**
+```{r}
+mean(EUnoNA$nopart, na.omit = T) - se(EUnoNA$nopart) * qt(0.025, length(na.omit(EUnoNA$nopart)) - 1, lower.tail = F)
+```
+
+**Upper CI 95%**
+```{r}
+mean(EUnoNA$nopart, na.omit = T) + se(EUnoNA$nopart) * qt(0.025, length(na.omit(EUnoNA$nopart)) - 1, lower.tail = F)
+```
+
+Notice the qt command that gets us the critical t value for 0.025 probability in the tail. Degrees of freedom is the length of the thing that we calculate the CI for. Finally, -1 because degrees of freedom is n-1 for this calculation. However, often the researchers just use critical value (e.g. 1.96). 
+
+<br>
+
+###Chi-square test
+
+Chi-square is used to assess if there is a relation between two categorical variables. First we need to recode variables
+
+```{r}
+# recode first variable
+
+EUnoNA$stability <- "Low"
+
+EUnoNA$stability[(EUnoNA$polar <= 5) & (EUnoNA$nogov <= 8)] <- "High"  
+EUnoNA$stability[(EUnoNA$polar > 5 & EUnoNA$polar <= 8) & (EUnoNA$nogov > 8 & EUnoNA$nogov <= 11)] <- "Medium"
+EUnoNA$stabFactor <- factor(EUnoNA$stability, levels = c("Low", "Medium", "High"), ordered = T)
+
+# recode second variable
+
+EUnoNA$wealth <- 1
+EUnoNA$wealth[EUnoNA$GDP < median(EUnoNA$GDP)] <- 0 
+```
+
+There are couple of options to do a chi-square test of independence
+
+**Option  1**
+
+The package we want is called descr
+
+```{r}
+# install.packages("descr", dependencies = T)
+library(descr)
+
+crosstab(EUnoNA$wealth, EUnoNA$stabFactor, chisq = T, plot = F) #  the crosstab function does not create a useful plot
+```
+
+We get a warning message. Why do we get this? There must be at least 5 frequencies in each cell
+
+**Option  2**
+
+It is possible to do chi-square test without the cross-tab too
+```{R}
+chisq.test(EUnoNA$wealth, EUnoNA$stabFactor)
+```
+
+
+<br>
+
+###t-tests
+
+Lets look at the t.test command's help.
+
+```{}
+?t.test
+```
+
+You can set confidence level with conf.level and you can set if it is a paired sample or not. You can do two tailed (default) or one tailed (**never!!!**). 
+ 
+<br>
+
+#### One Sample t-test
+Is the effective number of parties different than 3? 
+
+```{r}
+t.test(EUnoNA$nopart, mu=3)
+```
+
+<br>
+
+####Independent Sample t test  
+
+Let's check if the wealthier countries differ in terms of political polarization from the poorer ones
+
+```{r}
+(wealth_split <- split(EUnoNA$polar, EUnoNA$wealth))
+x <- as.vector(wealth_split[[1]])
+y <- as.vector(wealth_split[[2]])
+t.test(x,y)
+```
