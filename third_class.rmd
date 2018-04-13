@@ -271,7 +271,7 @@ myData <- read.csv("example.csv", header=TRUE)
 ```{r}
 ## install.packages('XLConnect', dependencies = T)
 library(XLConnect)
-myData <- readWorksheet(loadWorkbook("C:/Introduction to R/example.txt/example.xlsx"),sheet=1)
+myData <- readWorksheet(loadWorkbook("C:/Introduction to R/example.xlsx"),sheet=1)
 ```
 
 ### Importing files of type .sav (SPSS) 
