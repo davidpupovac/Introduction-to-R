@@ -52,7 +52,7 @@ h4 {
 </style>
 ---  
 <!-- you made a big font with #####--> 
-#### What is R?
+### What is R?
 
 **The R is an environment for data analysis and graphics.**  
 
@@ -70,7 +70,7 @@ h4 {
 - Powerful
 - Steep learning curve 
 
-#### Information on R 
+### Information on R 
 
 ### Main web pages
 
@@ -95,7 +95,7 @@ Comprehensive R Archive Network site: [CRAN](https://cran.r-project.org/)
 
 <br>
 
-#### R and R Studio 
+### R and R Studio 
 
 Available for mac, linux and windows
 
@@ -151,14 +151,14 @@ does nothing. So, to make a separation in code you can do the following:
 
 <br>
 
-#### Running some commands from introductory message:
+### Running some commands from introductory message:
 <!-- you forced new line by making space--> 
 citation()  
 help.start()  
 demo()  
 demo(graphics) 
 
-####Basic commands (built-in functions):
+### Basic commands (built-in functions):
 
 ```{r}
 2 + 2
