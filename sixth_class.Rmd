@@ -1,0 +1,307 @@
+---
+title: "Introduction to R: Real stats"
+author: "David Pupovac"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    fig_caption: yes
+    fig_width: 6
+    theme: readable
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+fontsize: 10pt
+---
+  
+<style type="text/css">
+  
+  body, td {
+    font-size: 14px;
+    text-align: justify;
+  }
+code.r{
+  font-size: 12px;
+}
+pre{
+  background-color: #FFFFFF;
+    font-size: 12px;
+}
+pre:not([class]) {
+  background-color: #D8D8D8;
+    color: black;
+}
+h1 {
+  font-size: 28px;
+  text-align: center;
+}
+h2 {
+  font-size: 24px;
+  text-align: left;
+}
+h3 {
+  font-size: 20px;
+  text-align: left;
+  margin: 2em 0 1.5em 0;
+}
+h4 {
+  font-size: 18px;
+  text-align: center;
+  margin: 0em 0 1em 0;
+}
+</style>
+--- 
+
+**For the last class we will only do statistical analyses**
+
+Let's get data in
+
+```{R}
+# setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/sixth_class_data)
+```
+
+```{R}
+anest04 <- read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/sixth_class_data/a02anes2004trimmed.csv")
+```
+
+<br>
+
+####Descriptive analysis
+
+```{R}
+summary(anest04)
+```
+
+We see a few missing values.  Nothing substantial so probably we can drop them. In cases when you have many variables, you want to be very careful with this.
+
+```{R}
+anest04nomiss <- na.omit(anest04)
+
+library(psych)
+describe(anest04nomiss)
+```
+
+<br>
+
+####Crosstabulation
+
+```{}
+# install.packages("descr", dependencies = T)
+```
+
+```{R}
+library(descr)
+
+crosstab(anest04nomiss$edu, anest04nomiss$presvote, chisq = F, plot = F)
+```
+
+We may also want more than frequencies.  Often we want share of each cell.
+
+```{R}
+crosstab(anest04nomiss$edu, anest04nomiss$presvote, plot = F, prop.t = T)
+
+crosstab(anest04nomiss$edu, anest04nomiss$presvote, plot = F, prop.c = T)
+```
+
+<br>
+
+####t-tests
+
+Lets look at the t.test command's help.
+
+```{}
+?t.test
+```
+
+You can set confidence level with conf.level and you can set if it is a paired sample or not. You can do two tailed (default) or one tailed (**never!!!**).
+
+<br>
+
+####One sample t-test
+
+**Research question:** Can we say that the US is not sexist?  
+(Middle value is of variable womnotru  3 - we can cosnider anything below that sexist)
+
+```{R}
+t.test(anest04nomiss$womnotru, mu=3)
+```
+
+<br>
+
+####Independent sample t test
+
+**Research question:** Is there is a significant difference between Republicans and Democrats with respect to sexism?
+
+We demonstrate some additional ways of doing this:
+
+**Option  1**
+
+First lets grab all the Kerry Voters  (creates dataframe with all the Kerry voters)
+```{R}
+x <- subset(anest04nomiss, presvote == 1)
+```
+
+Then all the Bush voters  (creates dataframe with all the Bush voters)
+```{R}
+y <- subset(anest04nomiss, presvote == 2)
+```
+
+And now do an independent sample t test
+```{R}
+t.test(x$womnotru,y$womnotru)
+```
+
+**Option 2**
+
+```{R}
+t.test(anest04nomiss$womnotru ~ anest04nomiss$presvote)
+```
+
+<br>
+
+####Paired sample t test
+
+Let's load a different dataset (note that other dataframe stays in memory).
+
+
+```{R}
+imag <- read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/sixth_class_data/imaginationtherapy.csv", header = F)
+```
+
+**Research question:** Is there an effect of a treatment?
+
+Let's do some simple descriptive statistics
+
+```{R}
+summary(imag)
+
+```
+
+**Option  1**
+
+And now do a paired sample t test
+```{R}
+t.test(imag$V3 - imag$V2) # notice the difference in to independent samaple t test ( ~ vs. -)
+```
+
+**Option  2**
+
+```{R}
+t.test(imag$V3, imag$V2, paired = T)
+```
+
+<br>
+
+####Correlation
+```{}
+?cor
+```
+
+**Research question:** What is the relationship of the support for the Republicans (pid), educational level (edu) and sexism (womnotru)?
+
+```{R}
+cor(anest04nomiss[c(2,4:5)])
+```
+
+But are these correlations statistically significant?
+
+<br>
+
+**Correlations with significance levels**
+
+```{R}
+#install.packages("Hmisc", dependencies = T)
+
+library(Hmisc)
+```
+
+<br>
+
+With following command we have two options: Pearson correlation and Spearman correlation
+
+<br>
+
+**Pearson correlation**
+
+```{R}
+rcorr(as.matrix(anest04nomiss[c(2,4:5)]), type="pearson") 
+```
+
+So we get  several segments:
+
+-	First: is the correlation matrix
+
+-	Second: is sample size (n)
+
+-	Third: are p values (significance) - as usual we want these to be  below 0.1, 0.05, or 0.01
+
+<br>
+
+**Spearman correlation** - this is correlation between ranked variables (good for ordinal variables or non-linear relationships)
+
+```{R}
+rcorr(as.matrix(anest04nomiss[c(2,4:5)]), type="spearman")
+```
+
+Note also that this is done with data matrix!
+
+
+
+####Regressions
+
+Lets start with a bivariate case.
+Use sexism as the dependent variable.  Use party ID as IV.
+What do you expect to find?
+
+```{R}
+lm(womnotru ~ pid, data = anest04nomiss)
+```
+
+
+This output didn't tell us much. But appearances can be misleading
+
+
+```{R}
+bivreg <- lm(womnotru ~ pid, data = anest04nomiss)
+```
+
+Now lets take a better look at this object
+
+```{R}
+str(bivreg)
+```
+
+
+<br>
+
+To get a full regression output use **"summary"** command
+
+```{R}
+summary(bivreg)
+```
+
+
+<br>
+
+**Multivariate extension is pretty easy**
+
+
+```{R}
+multreg <- lm(womnotru ~ pid + edu + as.factor(presvote), data = anest04nomiss)
+summary(multreg)
+```
+
+Why as.factor?  We could just use the dummy as well. So let's create a dummy
+
+```{R}
+anest04nomiss$bush <- anest04nomiss$presvote - 1
+```
+
+Let's rerun the model.
+
+```{R}
+multreg2 <- lm(womnotru ~ pid + edu + bush, data = anest04nomiss)
+summary(multreg2)
+```
+
+**We get the same result**
