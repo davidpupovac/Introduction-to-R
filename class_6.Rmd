@@ -57,16 +57,16 @@ h4 {
 Let's get data in
 
 ```{R}
-# setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/sixth_class_data)
+# setwd("C:/Desktop/Lazarski/Introduction/Introduction to R")
 ```
 
 ```{R}
-anest04 <- read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/sixth_class_data/a02anes2004trimmed.csv")
+anest04 <- read.csv("C:/Desktop/Lazarski/Introduction/Introduction to R/a02anes2004trimmed.csv")
 ```
 
 <br>
 
-####Descriptive analysis
+## Descriptive analysis
 
 ```{R}
 summary(anest04)
@@ -83,7 +83,7 @@ describe(anest04nomiss)
 
 <br>
 
-####Crosstabulation
+## Crosstabulation
 
 ```{}
 # install.packages("descr", dependencies = T)
@@ -105,7 +105,7 @@ crosstab(anest04nomiss$edu, anest04nomiss$presvote, plot = F, prop.c = T)
 
 <br>
 
-####t-tests
+## t-tests
 
 Lets look at the t.test command's help.
 
@@ -117,7 +117,7 @@ You can set confidence level with conf.level and you can set if it is a paired s
 
 <br>
 
-####One sample t-test
+### One sample t-test
 
 **Research question:** Can we say that the US is not sexist?  
 (Middle value is of variable womnotru  3 - we can cosnider anything below that sexist)
@@ -128,7 +128,7 @@ t.test(anest04nomiss$womnotru, mu=3)
 
 <br>
 
-####Independent sample t test
+### Independent sample t test
 
 **Research question:** Is there is a significant difference between Republicans and Democrats with respect to sexism?
 
@@ -159,7 +159,7 @@ t.test(anest04nomiss$womnotru ~ anest04nomiss$presvote)
 
 <br>
 
-####Paired sample t test
+### Paired sample t test
 
 Let's load a different dataset (note that other dataframe stays in memory).
 
@@ -192,7 +192,7 @@ t.test(imag$V3, imag$V2, paired = T)
 
 <br>
 
-####Correlation
+## Correlation
 ```{}
 ?cor
 ```
@@ -247,7 +247,7 @@ Note also that this is done with data matrix!
 
 
 
-####Regressions
+## Regression
 
 Lets start with a bivariate case.
 Use sexism as the dependent variable.  Use party ID as IV.
