@@ -318,7 +318,7 @@ ftable(newTabThree)  # You can see why it can get very complicated if number of 
 
 ## Saving Data
 
-**And finally to see how to save the data upon modifications:**
+**And finally to save the data upon modifications:**
 
 ```{R}
 write.table(EUnoNA, file = "eu-data.txt", sep = " ", row.names = F)  # it will save in your working directory. 
