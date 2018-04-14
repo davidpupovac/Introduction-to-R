@@ -54,11 +54,11 @@ h4 {
 
 
 ```{R}
-# setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data")
+# setwd("C:/Desktop/Introduction to R/third_class_data")
 ```
 
 ```{R}
-EUnoNA <- na.omit(read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data/example.csv")) # notice: we combined several commands together 
+EUnoNA <- na.omit(read.csv("C:/Desktop/Introduction to R/example.csv")) # notice: we combined several commands together 
 ```
  
 <br>
@@ -67,7 +67,7 @@ EUnoNA <- na.omit(read.csv("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Intro
  
 <br>
 
-####Histogram
+## Histogram
 
 ```{R}
 hist(EUnoNA$polar)
@@ -94,7 +94,7 @@ xlab = "GDP", col ="darkgreen")
  
 <br>
 
-####Scatterplots
+## Scatterplots
 ```{R}
 layout(1:1) # fixing the layout 
 
@@ -120,14 +120,14 @@ pairs(~polar + vol + nopart + disp + GDP +  demo + nogov, data=EUnoNA,
 
 Notice that in this case we did not refer to variable as "variable$dataset" but rather we specified a dataset with command data=EUnoNA and used names of variables (column headers).
 
-####Boxplots
+## Boxplots
 
 ```{R}
 boxplot(EUnoNA$polar, main="Boxplot of polarization", col="gray")
 ```
 
 
-####ggplot2
+### ggplot2
 
 R has powerful graphing packages that allow you to create more esthetically appealing graphs. The best known packages are ggplot2 and lattice. Let's just do one relatively simple example using ggplot2
 
@@ -174,7 +174,7 @@ p + geom_vline(xintercept=mean(EUnoNA$polar), linetype="dotted", color = "darkgr
 # Notice the difference between geom_vline and geom_hline
 ```
 
-####Standardization - z scores
+## Standardization - z scores
 
 But before we discus z scores we will discuss a powerful feature of most programming languages - **functions**. If you have to do something more than twice, write a function for it!  Here's a simple example. 
 
@@ -221,7 +221,7 @@ plot(EUnoNA$nopart,EUnoNA$nopartStand)
 
 <br>
 
-####Central limit theorem
+## Central limit theorem
 
 **Central limit theorem**: For any population with mean M and standard deviation SD, the distribution of sample means for sample size N will have a mean of M and a standard deviation of  SD/sqrt(N) and it will be approximately normally distributed. 
 
@@ -285,7 +285,7 @@ Notice the qt command that gets us the critical t value for 0.025 probability in
 
 <br>
 
-####Chi-square test
+## Chi-square test
 
 Chi-square is used to assess if there is a relation between two categorical variables. First we need to recode variables
 
@@ -329,7 +329,7 @@ chisq.test(EUnoNA$wealth, EUnoNA$stabFactor)
 
 <br>
 
-####t-tests
+## t-tests
 
 Lets look at the t.test command's help.
 
@@ -341,7 +341,7 @@ You can set confidence level with conf.level and you can set if it is a paired s
  
 <br>
 
-##### One Sample t-test
+### One Sample t-test
 Is the effective number of parties different than 3? 
 
 ```{r}
@@ -350,7 +350,7 @@ t.test(EUnoNA$nopart, mu=3)
 
 <br>
 
-#####Independent Sample t test  
+### Independent Sample t test  
 
 Let's check if the wealthier countries differ in terms of political polarization from the poorer ones
 
