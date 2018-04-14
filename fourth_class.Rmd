@@ -54,7 +54,7 @@ h4 {
 
 <br>
 
-####Data import (cont.)
+## Data import (cont.)
 ```{R}
 setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data")
 ```
@@ -97,7 +97,7 @@ as.numeric(as.factor(myData$country))
 
 ```
 
-###A slight departure
+### A slight departure
 
 For some reason library(XLConnect) did not work for us. However there are other ways to import .xlsx files (for numerous other ways check the web). 
 
@@ -107,7 +107,7 @@ library(xlsx)
 myData <- read.xlsx("example.xlsx", sheetName="example")
 ```
 
-###Working with Data
+### Working with Data
 
 ```{R}
 
@@ -123,11 +123,11 @@ ls()  # and we check
 
 <br>
 
-####Recoding
+## Recoding
 
 Recoding is process of transforming existing values of variables to new values. We can either recode into a new variable or recode into the same variable. In general, in practice, it is better to create a new variable. 
 
-###Recoding missing
+### Recoding missing
 
 ```{R}
 is.na(EU)  ## this will be impractical for larger datasets.
@@ -153,7 +153,7 @@ EUnoNA <- subset(EU, is.na(polar) == F)  # here we also introduce subset functio
 EUnoNA <- na.omit(EU)  # drop EVERYTHING that is missing. Everything here means that if you have an observation with a missing value for only one variable, the whole observation will be dropped! 
 ```
 
-###Recoding into dummies
+### Recoding into dummies
 
 ```{R}
 EUnoNA$govDummy <- NA  # a new variable in our dataset that only contains missing values
@@ -173,7 +173,7 @@ If you are absolutely sure that there are no missing values, you can take a shor
 EUnoNA$govDummyIF <- ifelse(EUnoNA$nogov <= 8, 0, 1)  # The first argument is the value for the new variable if condition is true, and the last one if the condition is false.
 ```
 
-###Recoding numeric values
+### Recoding numeric values
 
 ```{R}
 
@@ -213,7 +213,7 @@ head(EUnoNA)
 
 What if we want to give more weight to one of the variables? (discuss)
 
-###Factors - ordering categories and reference category
+### Factors - ordering categories and reference category
 
 ```{R}
 class(EUnoNA$stability) # We have created this variable, and given the values we have assigned to it, it is a character variable. 
@@ -253,7 +253,7 @@ levels(EUnoNA$stabFactor)  # see, not ordered, but you exert control on the base
 
 <br>
 
-####Basic descriptive statistics 
+## Basic descriptive statistics 
 
 The easiest way to go about this is the following
 ```{R}
@@ -262,7 +262,7 @@ summary(EUnoNA)
 str(EUnoNA)
 ```
 
-###The particular statistics
+### The particular statistics
 ```{R}
 mean(EUnoNA$GDP) 
 median(EUnoNA$GDP)
@@ -274,16 +274,16 @@ sd(EUnoNA$GDP)  # standard deviation
 var(EUnoNA$GDP) # variance 
 ```
 
-###The statistics across groups
+### The statistics across groups
 ```{R}
 aggregate(EUnoNA$GDP, by=list(EUnoNA$stability), FUN = mean) # you can replace FUN=mean with other functions (e.g. FUN = sd)
 ```
 
 <br>
 
-####Frequency and tables
+## Frequency and tables
 
-###Two way tables
+### Two way tables
 
 ```{R}
 table(EUnoNA$stability, EUnoNA$polar)  # so, simple cross-table is not very useful for continuous variable 
@@ -301,7 +301,7 @@ prop.table(newTab, 1)  # row percentages. You get column percentages by refering
 round(prop.table(newTab, 1), digits = 3)*100
 ```
 
-###Three way tables
+### Three way tables
 
 ```{R}
 # For three way tables let us create another dichotmous variable
@@ -316,7 +316,7 @@ ftable(newTabThree)  # You can see why it can get very complicated if number of 
 
 <br>
 
-####Saving Data
+## Saving Data
 
 **And finally to see how to save the data upon modifications:**
 
