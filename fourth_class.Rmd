@@ -1,0 +1,327 @@
+---
+title: "Introduction to R: Recoding data and Descriptive Statistics"
+author: "David Pupovac"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    fig_caption: yes
+    fig_width: 6
+    theme: readable
+  pdf_document:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+fontsize: 10pt
+---
+  
+<style type="text/css">
+  
+  body, td {
+    font-size: 14px;
+    text-align: justify;
+  }
+code.r{
+  font-size: 12px;
+}
+pre{
+  background-color: #FFFFFF;
+    font-size: 12px;
+}
+pre:not([class]) {
+  background-color: #D8D8D8;
+    color: black;
+}
+h1 {
+  font-size: 28px;
+  text-align: center;
+}
+h2 {
+  font-size: 24px;
+  text-align: left;
+}
+h3 {
+  font-size: 16px;
+  text-align: left;
+  margin: 2em 0 1.5em 0;
+}
+h4 {
+  font-size: 18px;
+  text-align: center;
+  margin: 0em 0 1em 0;
+}
+</style>
+---  
+
+<br>
+
+####Data import (cont.)
+```{R}
+setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data")
+```
+
+```{R}
+myData <- read.csv("example.csv", sep = ";")  
+
+View(myData) # now everything is one variable in the data frame, because one element will be taken up until we find the separator
+
+myData <- read.csv("example.csv", sep = ",") 
+
+myData <- read.csv("example.csv") # for this example this will work
+```
+
+Be sure to check the type of each variable
+
+```{R}
+str(myData)
+
+# =========================================
+# here myData$country is factor
+myData <- read.table("example.txt", header = T)
+
+str(myData)
+
+is(myData$country)
+
+# turn vector to numeric
+as.numeric(myData$country)
+
+# =========================================
+# here myData$country is character
+library(XLConnect)
+myData <- readWorksheet(loadWorkbook("example.xlsx"),sheet=1)
+
+is(myData$country)
+
+# turn character to numeric
+as.numeric(as.factor(myData$country))
+
+```
+
+###A slight departure
+
+For some reason library(XLConnect) did not work for us. However there are other ways to import .xlsx files (for numerous other ways check the web). 
+
+```{R}
+# install.packages("xlsx")
+library(xlsx)
+myData <- read.xlsx("example.xlsx", sheetName="example")
+```
+
+###Working with Data
+
+```{R}
+
+myData <- read.table("example.txt", header = T)
+
+EU <- myData  # This does not mean that the older data frame is gone 
+
+ls()
+
+rm(list = c("myData"))
+ls()  # and we check
+```
+
+<br>
+
+####Recoding
+
+Recoding is process of transforming existing values of variables to new values. We can either recode into a new variable or recode into the same variable. In general, in practice, it is better to create a new variable. 
+
+###Recoding missing
+
+```{R}
+is.na(EU)  ## this will be impractical for larger datasets.
+
+summary(EU)  ## we know that some variables have missing values
+
+EU[is.na(EU$polar), ]  # so, we want to see all the information for the observation where polarization is missing. 
+```
+What happens if we keep missing values?
+
+```{R}
+mean(EU$polar)
+mean(EU$polar, na.rm = T) # the function mean() has option to remove NA. This is not a case for every function.
+```
+
+So we need to drop the observation where we have a missing value. There some alternatives.
+
+```{R}
+EUnoNA <- EU[is.na(EU$polar) == F, ]  # keep all information if polarization has non-missing values
+
+EUnoNA <- subset(EU, is.na(polar) == F)  # here we also introduce subset function in R. First, you stipulate which data do you want to subset, and then a condition In this function it is enough to use the variable name, without the data frame name)
+
+EUnoNA <- na.omit(EU)  # drop EVERYTHING that is missing. Everything here means that if you have an observation with a missing value for only one variable, the whole observation will be dropped! 
+```
+
+###Recoding into dummies
+
+```{R}
+EUnoNA$govDummy <- NA  # a new variable in our dataset that only contains missing values
+
+EUnoNA$govDummy[EUnoNA$nogov <= 8] <- 0  # assign the value 0 to the new variable, but only if a condition holds true that nogov is smaller or equal to 8.
+
+EUnoNA
+
+EUnoNA$govDummy[EUnoNA$nogov > 8] <- 1  # assign the value 1 to the new variable, but only if a condition holds true that nogov is larger to 8. 
+
+EUnoNA
+```
+
+If you are absolutely sure that there are no missing values, you can take a shortcut define the new variable with one of the values, and set up only one additional condition
+
+```{R}
+EUnoNA$govDummyIF <- ifelse(EUnoNA$nogov <= 8, 0, 1)  # The first argument is the value for the new variable if condition is true, and the last one if the condition is false.
+```
+
+###Recoding numeric values
+
+```{R}
+
+# Recode variable into a variable with 3 categories. 
+
+EUnoNA$govCAT[EUnoNA$nogov <= 8] <- 1
+EUnoNA$govCAT[EUnoNA$nogov > 8 & EUnoNA$nogov<= 14] <- 2
+EUnoNA$govCAT[EUnoNA$nogov > 14 & EUnoNA$nogov<= 21] <- 3
+```
+
+With more categories and more conditions, logic is the same. Here we want
+
+- "Low" if polarization is above 8 and nogov is above 11; 
+- "Medium" if polarization is between 5 and 8, whreas nogov is between 8 and 11;
+- "High" if polarization is smaller than 5 and the number of governments is lower than 8. 
+
+```{R}
+EUnoNA$stability <- "Low"
+EUnoNA$stability[(EUnoNA$polar > 5 & EUnoNA$polar <= 8) &
+(EUnoNA$nogov > 8 & EUnoNA$nogov <= 11)] <- "Medium"
+EUnoNA$stability[(EUnoNA$polar <= 5) & (EUnoNA$nogov <= 8)] <- "High"  
+is(EUnoNA$stability) # check the type of the variable
+
+# # so this is character and to convert it to a numeric variable we would need to do as.numeric(as.factor(EUnoNA$stability)), as noted above.
+```
+
+So, in previous case we created a new variable  from values of two variables.Another way to combine variables is the following
+
+```{R}
+# An example of mathematical recoding.
+EUnoNA$newVar <- (EUnoNA$polar + EUnoNA$vol)/2
+
+head(EUnoNA)
+```
+
+**THE SCALING OF VARIBALES IS VERY IMPORTANT IN THIS EXAMPLE!!!** (if variables are not on the same scale you may want to standardize them)
+
+What if we want to give more weight to one of the variables? (discuss)
+
+###Factors - ordering categories and reference category
+
+```{R}
+class(EUnoNA$stability) # We have created this variable, and given the values we have assigned to it, it is a character variable. 
+
+table(EUnoNA$stability) # a simple way to determine the frequency of each category  
+
+
+# As there is some orderding, so this might not be good enough for us
+EUnoNA$stabFactor <- factor(EUnoNA$stability)  # We should treat this as a factor variable, that has levels
+levels(EUnoNA$stabFactor) 
+
+# What is the ordering right now? Actually, there is no real ordering.
+is.ordered(EUnoNA$stabFactor)
+
+EUnoNA$stabFactor <- factor(EUnoNA$stability, ordered = T)  # Now, there will be ordering, but is it correct?
+is.ordered(EUnoNA$stabFactor)
+
+levels(EUnoNA$stabFactor)  # this will give you alphabetical ordering. But we have qualitative knowledge about the order
+
+# so, to impose the order of levels
+EUnoNA$stabFactor <- factor(EUnoNA$stability, levels = c("Low", "Medium", "High"), 
+                            ordered = T)
+levels(EUnoNA$stabFactor) 
+```
+
+**To set up a reference category**
+```{R}
+# One more useful functions here:
+EUnoNA$stabFactor <- factor(EUnoNA$stability)  # Get the simplest version
+
+EUnoNA$stabFactor <- relevel(EUnoNA$stabFactor, ref = "Medium")  # If you do not necessarily want an ordered factor (happens many times), but you care about the reference category, this is the way to go
+
+levels(EUnoNA$stabFactor)  # see, not ordered, but you exert control on the baseline. 
+```
+
+**THIS IS NOT ALL!** (far from it) There are numerous ways to recode variables and some are associated with particular packages. For instance, check library(car) and library(plyr).
+
+<br>
+
+####Basic descriptive statistics 
+
+The easiest way to go about this is the following
+```{R}
+summary(EUnoNA)
+# compare this output to the structure of data 
+str(EUnoNA)
+```
+
+###The particular statistics
+```{R}
+mean(EUnoNA$GDP) 
+median(EUnoNA$GDP)
+min(EUnoNA$GDP)
+max(EUnoNA$GDP)
+range(EUnoNA$GDP)
+quantile(EUnoNA$GDP, probs = c(0.01, 0.99))  # the 1st and 99th percentiles
+sd(EUnoNA$GDP)  # standard deviation
+var(EUnoNA$GDP) # variance 
+```
+
+###The statistics across groups
+```{R}
+aggregate(EUnoNA$GDP, by=list(EUnoNA$stability), FUN = mean) # you can replace FUN=mean with other functions (e.g. FUN = sd)
+```
+
+<br>
+
+####Frequency and tables
+
+###Two way tables
+
+```{R}
+table(EUnoNA$stability, EUnoNA$polar)  # so, simple cross-table is not very useful for continuous variable 
+table(EUnoNA$stability, EUnoNA$nogov)  
+
+# =========================================
+# Get percentages
+
+newTab <- table(EUnoNA$stability, EUnoNA$nogov)
+
+prop.table(newTab, margin = NULL) # total percentages
+round(prop.table(newTab, margin = NULL), digits = 3)*100 # real percentages
+
+prop.table(newTab, 1)  # row percentages. You get column percentages by refering to the second dimension of the table matrix (prop.table(newTab, 2))
+round(prop.table(newTab, 1), digits = 3)*100
+```
+
+###Three way tables
+
+```{R}
+# For three way tables let us create another dichotmous variable
+EUnoNA$dispDummy <- 0
+EUnoNA$dispDummy[EUnoNA$disp > 3.5] <- 1  
+
+newTabThree <- table(EUnoNA$stability, EUnoNA$govDummy, EUnoNA$dispDummy)
+
+newTabThree
+ftable(newTabThree)  # You can see why it can get very complicated if number of categories is not low.
+```
+
+<br>
+
+####Saving Data
+
+**And finally to see how to save the data upon modifications:**
+
+```{R}
+write.table(EUnoNA, file = "eu-data.txt", sep = " ", row.names = F)  # it will save in your working directory. 
+
+write.csv(EUnoNA, file = "eu-data.csv", row.names = F)  # here, the separator is assumed, but arguments this function takes are the same
+```
