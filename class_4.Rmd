@@ -16,6 +16,9 @@ fontsize: 10pt
  
 
 ## Data import (cont.)
+
+**Set the directory and load the data**
+
 ```{R}
 setwd("C:/Users/Korisnik.Korisnik-PC/Desktop/Lazarski/Introduction to R/third_class_data")
 ```
