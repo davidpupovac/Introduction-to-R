@@ -97,7 +97,7 @@ We demonstrate some additional ways of doing this:
 
 **Option  1**
 
-First lets grab all the Kerry Voters  (creates dataframe with all the Kerry voters)
+First lets grab all the Kerry voters  (i.e. create dataframe with all the Kerry voters)
 ```{R}
 x <- subset(anest04nomiss, presvote == 1)
 ```
