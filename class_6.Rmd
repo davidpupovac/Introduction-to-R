@@ -20,10 +20,8 @@ fontsize: 10pt
 Let's get data in
 
 ```{R}
-# setwd("C:/Desktop/Lazarski/Introduction/Introduction to R")
-```
+setwd("C:/Desktop/Lazarski/Introduction/Introduction to R")
 
-```{R}
 anest04 <- read.csv("C:/Desktop/Lazarski/Introduction/Introduction to R/a02anes2004trimmed.csv")
 ```
 
